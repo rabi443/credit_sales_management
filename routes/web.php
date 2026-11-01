@@ -11,6 +11,7 @@ use App\Http\Controllers\CreditPaymentController;
 use App\Http\Controllers\Admin\CustomerAccountController;
 use App\Http\Controllers\CustomerPortalAuthController;
 use App\Http\Controllers\CustomerPortalController;
+use App\Http\Controllers\CustomerPasswordController;
 
 
 // ==============================
@@ -153,5 +154,14 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
         Route::post('/logout', [CustomerPortalAuthController::class, 'logout'])
             ->name('logout');
+
+        Route::get('/profile', [CustomerPortalController::class, 'profile'])
+            ->name('profile');
+
+        Route::get('/change-password', [CustomerPasswordController::class, 'edit'])
+            ->name('password.edit');
+
+        Route::put('/change-password', [CustomerPasswordController::class, 'update'])
+            ->name('password.update');
     });
 });

@@ -89,4 +89,11 @@ class CustomerPortalController extends Controller
 
         return view('customer.invoice', compact('customer', 'sale'));
     }
+
+    public function profile()
+    {
+        $customer = Auth::guard('customer')->user();
+
+        return view('customer.profile', compact('customer'));
+    }
 }

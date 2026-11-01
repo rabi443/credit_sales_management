@@ -21,6 +21,7 @@
             </div>
         @endif
 
+
         {{-- HEADER --}}
         <div class="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
 
@@ -49,6 +50,7 @@
                 </a>
 
             </div>
+
         </div>
 
 
@@ -57,7 +59,9 @@
 
             {{-- TOTAL CREDIT --}}
             <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
                 <div class="flex items-center justify-between">
+
                     <div>
                         <p class="text-sm font-medium text-slate-500">
                             Total Credit
@@ -71,13 +75,17 @@
                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-2xl">
                         🧾
                     </div>
+
                 </div>
+
             </div>
 
 
             {{-- TOTAL PAID --}}
             <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
                 <div class="flex items-center justify-between">
+
                     <div>
                         <p class="text-sm font-medium text-slate-500">
                             Total Received
@@ -91,13 +99,17 @@
                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100 text-2xl">
                         💰
                     </div>
+
                 </div>
+
             </div>
 
 
             {{-- OUTSTANDING --}}
             <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+
                 <div class="flex items-center justify-between">
+
                     <div>
                         <p class="text-sm font-medium text-slate-500">
                             Outstanding Balance
@@ -111,7 +123,9 @@
                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 text-2xl">
                         📊
                     </div>
+
                 </div>
+
             </div>
 
         </div>
@@ -183,9 +197,11 @@
 
             {{-- AUTO SEARCH MESSAGE --}}
             <div class="border-b border-slate-100 bg-slate-50 px-5 py-2">
+
                 <p class="text-xs text-slate-500">
                     Search automatically while typing.
                 </p>
+
             </div>
 
 
@@ -253,44 +269,59 @@
 
                             @endphp
 
+
                             <tr class="transition hover:bg-slate-50">
 
                                 {{-- CUSTOMER NAME AND PHOTO --}}
                                 <td class="whitespace-nowrap px-5 py-4">
 
-                                    <a
-                                        href="{{ route('credits.customers.show', $customer) }}"
-                                        class="flex items-center gap-3"
-                                    >
+                                    <div class="flex items-center gap-3">
 
+                                        {{-- CLICKABLE PHOTO --}}
                                         @if($customerPhoto)
 
-                                            <img
-                                                src="{{ $customerPhoto }}"
-                                                alt="{{ $customer->name }}"
-                                                class="h-11 w-11 rounded-full border border-slate-200 object-cover"
+                                            <a
+                                                href="{{ $customerPhoto }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title="Click to view full image"
+                                                class="shrink-0"
                                             >
+
+                                                <img
+                                                    src="{{ $customerPhoto }}"
+                                                    alt="{{ $customer->name }}"
+                                                    class="h-11 w-11 cursor-pointer rounded-full border border-slate-200 object-cover transition hover:scale-110 hover:ring-2 hover:ring-blue-500"
+                                                >
+
+                                            </a>
 
                                         @else
 
-                                            <div class="flex h-11 w-11 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+                                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
                                                 {{ $initials ?: 'C' }}
                                             </div>
 
                                         @endif
 
 
+                                        {{-- CUSTOMER DETAILS --}}
                                         <div>
-                                            <p class="font-semibold text-slate-800 hover:text-blue-600">
+
+                                            <a
+                                                href="{{ route('credits.customers.show', $customer) }}"
+                                                class="font-semibold text-slate-800 hover:text-blue-600"
+                                            >
                                                 {{ $customer->name }}
-                                            </p>
+                                            </a>
 
                                             <p class="mt-0.5 text-xs text-slate-400">
                                                 {{ $customer->credit_sales_count }} credit sales
                                             </p>
+
                                         </div>
 
-                                    </a>
+                                    </div>
 
                                 </td>
 
@@ -321,17 +352,23 @@
                                     </span>
 
                                     @if($balance < 0)
+
                                         <p class="text-xs text-green-600">
                                             Advance
                                         </p>
+
                                     @elseif($balance == 0)
+
                                         <p class="text-xs text-green-600">
                                             Cleared
                                         </p>
+
                                     @else
+
                                         <p class="text-xs text-red-500">
                                             Due
                                         </p>
+
                                     @endif
 
                                 </td>
@@ -370,6 +407,7 @@
                                         >
 
                                             @csrf
+
                                             @method('DELETE')
 
                                             <button
@@ -388,9 +426,11 @@
 
                             </tr>
 
+
                         @empty
 
                             <tr>
+
                                 <td colspan="6" class="px-5 py-12 text-center">
 
                                     <div class="text-4xl">
@@ -402,23 +442,32 @@
                                     </h3>
 
                                     <p class="mt-1 text-sm text-slate-500">
+
                                         @if($search)
+
                                             No customers match "{{ $search }}".
+
                                         @else
+
                                             Add your first customer to get started.
+
                                         @endif
+
                                     </p>
 
                                     @if($search)
+
                                         <a
                                             href="{{ route('credits.index') }}"
                                             class="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline"
                                         >
                                             Clear search
                                         </a>
+
                                     @endif
 
                                 </td>
+
                             </tr>
 
                         @endforelse

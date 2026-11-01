@@ -16,24 +16,84 @@
         HEADER
     ========================= --}}
     <header class="bg-slate-900 text-white shadow">
+
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
 
+            {{-- LOGO / TITLE --}}
             <a href="{{ route('customer.dashboard') }}"
                class="text-lg font-bold">
                 💳 My Credit Account
             </a>
 
+
+            {{-- CUSTOMER PROFILE + LOGOUT --}}
             <div class="flex items-center gap-3 text-sm">
 
-                <span class="hidden sm:inline">
-                    {{ auth('customer')->user()->name }}
-                </span>
+                @php
+                    $loggedCustomer = auth('customer')->user();
 
+                    $profilePhoto = $loggedCustomer->photo
+                        ? \Illuminate\Support\Facades\Storage::url($loggedCustomer->photo)
+                        : null;
+
+                    $profileInitial = strtoupper(
+                        substr($loggedCustomer->name, 0, 1)
+                    );
+                @endphp
+
+
+                {{-- CLICKABLE PROFILE PHOTO --}}
+                @if($profilePhoto)
+
+                    <a
+                        href="{{ $profilePhoto }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="View full profile photo"
+                        class="shrink-0"
+                    >
+                        <img
+                            src="{{ $profilePhoto }}"
+                            alt="{{ $loggedCustomer->name }}"
+                            class="h-10 w-10 cursor-pointer rounded-full border-2 border-white object-cover transition hover:scale-110 hover:ring-2 hover:ring-blue-400"
+                        >
+                    </a>
+
+                @else
+
+                    {{-- DEFAULT PROFILE INITIAL --}}
+                    <div
+                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-lg font-bold text-white"
+                        title="{{ $loggedCustomer->name }}"
+                    >
+                        {{ $profileInitial }}
+                    </div>
+
+                @endif
+
+
+                {{-- CUSTOMER NAME --}}
+                {{-- <span class="hidden font-semibold sm:inline">
+                    {{ $loggedCustomer->name }}
+                </span> --}}
+
+                <a
+                    href="{{ route('customer.profile') }}"
+                    class="font-semibold text-white transition hover:text-blue-300"
+                    title="View My Profile"
+                >
+                    {{ $loggedCustomer->name }}
+                </a>
+
+
+                {{-- LOGOUT --}}
                 <form method="POST" action="{{ route('customer.logout') }}">
                     @csrf
 
-                    <button type="submit"
-                            class="rounded-lg border border-slate-600 px-3 py-2 transition hover:bg-slate-800">
+                    <button
+                        type="submit"
+                        class="rounded-lg border border-slate-600 px-3 py-2 transition hover:bg-slate-800"
+                    >
                         Logout
                     </button>
                 </form>
@@ -41,6 +101,7 @@
             </div>
 
         </div>
+
     </header>
 
 
@@ -73,8 +134,10 @@
 
         <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
 
+
             {{-- SHOP INFORMATION --}}
             <div>
+
                 <h2 class="mb-4 text-lg font-bold text-white">
                     💳 Credit Sales Management
                 </h2>
@@ -88,11 +151,13 @@
                 <p class="mt-4 text-sm text-slate-400">
                     Thank you for being our valued customer.
                 </p>
+
             </div>
 
 
             {{-- CONTACT INFORMATION --}}
             <div>
+
                 <h2 class="mb-4 text-lg font-bold text-white">
                     Contact Us
                 </h2>
@@ -102,15 +167,18 @@
                     {{-- PHONE --}}
                     <p>
                         <span class="mr-2">📞</span>
+
                         <a href="tel:+9779811349989"
                            class="transition hover:text-white">
                             +977 9811349989
                         </a>
                     </p>
 
+
                     {{-- WHATSAPP --}}
                     <p>
                         <span class="mr-2">💬</span>
+
                         <a href="https://wa.me/9779816321861"
                            target="_blank"
                            rel="noopener noreferrer"
@@ -119,21 +187,25 @@
                         </a>
                     </p>
 
+
                     {{-- EMAIL --}}
                     <p>
                         <span class="mr-2">✉️</span>
-                        <a href="mailto:your-email@example.com"
+
+                        <a href="mailto:rc2583463@gmail.com"
                            class="break-all transition hover:text-white">
                             rc2583463@gmail.com
                         </a>
                     </p>
 
                 </div>
+
             </div>
 
 
             {{-- ADDRESS --}}
             <div>
+
                 <h2 class="mb-4 text-lg font-bold text-white">
                     Our Location
                 </h2>
@@ -156,21 +228,22 @@
                     </p>
 
                 </div>
+
             </div>
 
 
             {{-- ESEWA QR CODE --}}
             <div>
+
                 <h2 class="mb-4 text-lg font-bold text-white">
                     Pay with eSewa
                 </h2>
 
                 <div class="inline-block rounded-xl bg-white p-3">
 
-                    {{-- Put your actual eSewa QR image here --}}
                     <img
                         src="{{ asset('images/esewa-qr.png') }}"
-                        alt="Rabin Kirana Store eSewa QR Code"
+                        alt="eSewa QR Code"
                         class="h-40 w-40 object-contain"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                     >
@@ -185,9 +258,14 @@
                     Scan the QR code using your eSewa app to make a payment.
                 </p>
 
-                <p class="mt-2 text-xs text-yellow-400">
-                    Please verify the receiver name before paying and take the screenshot of the payment confirmation for your records along with the reference number and send it to us for confirmation on WhatsApp. Otherwise your payment will not be recorded.
+                <p class="mt-2 text-xs leading-5 text-yellow-400">
+                    Please verify the receiver name before paying and
+                    take a screenshot of the payment confirmation for
+                    your records along with the reference number.
+                    Send it to us for confirmation on WhatsApp.
+                    Otherwise your payment will not be recorded.
                 </p>
+
             </div>
 
         </div>
@@ -205,6 +283,7 @@
 
                 <p>
                     Developed by
+
                     <span class="font-semibold text-white">
                         Rabin Kumar Chaudhary
                     </span>
