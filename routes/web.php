@@ -152,6 +152,9 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/invoices/{sale}', [CustomerPortalController::class, 'invoice'])
             ->name('invoices.show');
 
+        Route::get('/payments/{payment}', [CustomerPortalController::class, 'payment'])
+            ->name('payments.show');
+
         Route::post('/logout', [CustomerPortalAuthController::class, 'logout'])
             ->name('logout');
 

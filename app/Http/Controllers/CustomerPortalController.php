@@ -90,6 +90,27 @@ class CustomerPortalController extends Controller
         return view('customer.invoice', compact('customer', 'sale'));
     }
 
+    
+    public function payment($id)
+    {
+        // Logged-in customer
+        $customer = Auth::guard('customer')->user();
+
+        // Find payment belonging to this customer
+        $payment = CreditPayment::with([
+            'allocations.sale.items',
+            'allocations.sale.allocations',
+        ])
+        ->where('customer_id', $customer->id)
+        ->findOrFail($id);
+
+        return view('customer.payment-details', compact(
+            'customer',
+            'payment'
+        ));
+    }
+
+
     public function profile()
     {
         $customer = Auth::guard('customer')->user();

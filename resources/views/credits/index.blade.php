@@ -27,11 +27,11 @@
 
             <div>
                 <h1 class="text-2xl font-bold text-slate-800 sm:text-3xl">
-                    Customer Credit Dashboard
+                    Admin Dashboard
                 </h1>
 
                 <p class="mt-1 text-sm text-slate-500">
-                    Manage customers, credit sales and payments.
+                    Manage customers, sales and payments.
                 </p>
             </div>
 
@@ -46,7 +46,7 @@
                 <a href="{{ route('credits.sales.create') }}"
                    class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700">
                     <span>＋</span>
-                    New Credit Sale
+                    New Sale
                 </a>
 
             </div>
@@ -64,7 +64,7 @@
 
                     <div>
                         <p class="text-sm font-medium text-slate-500">
-                            Total Credit
+                            Total Sales
                         </p>
 
                         <h2 class="mt-2 text-2xl font-bold text-slate-800">
@@ -112,7 +112,7 @@
 
                     <div>
                         <p class="text-sm font-medium text-slate-500">
-                            Outstanding Balance
+                            Outstanding Receivable Balance
                         </p>
 
                         <h2 class="mt-2 text-2xl font-bold {{ $totalOutstanding >= 0 ? 'text-red-600' : 'text-green-600' }}">
@@ -400,7 +400,7 @@
 
 
                                         {{-- DELETE --}}
-                                        <form
+                                        {{-- <form
                                             action="{{ route('credits.customers.destroy', $customer) }}"
                                             method="POST"
                                             onsubmit="return confirm('Are you sure you want to delete {{ $customer->name }}?')"
@@ -418,7 +418,7 @@
                                                 Delete
                                             </button>
 
-                                        </form>
+                                        </form> --}}
 
                                     </div>
 

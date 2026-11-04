@@ -19,21 +19,16 @@
 
             {{-- LOGO --}}
             <a href="{{ route('credits.index') }}" class="text-lg font-bold">
-                💳 Rabin Credit Management
+                ðŸ’³ Rabin Kirana Store
             </a>
 
             {{-- DESKTOP NAVIGATION --}}
             <nav class="hidden items-center gap-4 text-sm sm:flex">
 
-                <a class="hover:text-blue-300"
+                {{-- <a class="hover:text-blue-300"
                    href="{{ route('credits.index') }}">
                     Customers
-                </a>
-
-                <a class="rounded-lg bg-blue-600 px-3 py-2 font-semibold hover:bg-blue-500"
-                   href="{{ route('credits.sales.create') }}">
-                    + Credit Sale
-                </a>
+                </a> --}}
 
                 @auth
                     <span class="text-slate-300">
@@ -58,7 +53,7 @@
                 class="rounded-lg border border-slate-600 px-3 py-2 text-sm sm:hidden"
                 aria-expanded="false"
                 aria-controls="mobileMenu">
-                ☰ Menu
+                â˜° Menu
             </button>
 
         </div>
@@ -76,7 +71,7 @@
 
                 <a href="{{ route('credits.sales.create') }}"
                    class="rounded-lg bg-blue-600 px-3 py-2 font-semibold hover:bg-blue-500">
-                    + Credit Sale
+                    + New Sale
                 </a>
 
                 @auth
@@ -148,7 +143,7 @@
                 {{-- ABOUT --}}
                 <div>
                     <h3 class="mb-3 text-lg font-bold text-white">
-                        💳 Rabin Credit Manager
+                        ðŸ’³ Rabin Credit Manager
                     </h3>
 
                     <p class="text-sm leading-6 text-slate-400">
@@ -255,7 +250,7 @@
 
                     menuButton.setAttribute('aria-expanded', String(!isHidden));
 
-                    menuButton.textContent = isHidden ? '☰ Menu' : '✕ Close';
+                    menuButton.textContent = isHidden ? 'â˜° Menu' : 'âœ• Close';
 
                 });
 

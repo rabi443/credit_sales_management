@@ -23,9 +23,12 @@ class CreditPayment extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function allocations(): HasMany
+    public function allocations()
     {
-        return $this->hasMany(CreditPaymentAllocation::class);
+        return $this->hasMany(
+            CreditPaymentAllocation::class,
+            'credit_payment_id'
+        );
     }
 
     public function getAllocatedAmountAttribute(): float

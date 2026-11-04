@@ -22,7 +22,7 @@
             {{-- LOGO / TITLE --}}
             <a href="{{ route('customer.dashboard') }}"
                class="text-lg font-bold">
-                💳 My Credit Account
+                💳 Rabin Kirana Store
             </a>
 
 

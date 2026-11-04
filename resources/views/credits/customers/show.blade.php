@@ -29,13 +29,13 @@
 
         <a href="{{ route('credits.customers.account.edit', $customer) }}"
         class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
-            🔐 Create / Reset Login
+            🔐 Reset Login
         </a>
         
 
         <a href="{{ route('credits.sales.create', ['customer_id' => $customer->id]) }}"
            class="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">
-            + Credit Sale
+            + New Sale
         </a>
 
         <a href="{{ route('credits.payments.create', $customer) }}"
@@ -174,7 +174,7 @@
 </div>
 
 
-{{-- CREDIT INVOICES --}}
+{{-- TRANSACTION INVOICES --}}
 <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-sm">
 
     {{-- HEADER --}}
@@ -182,7 +182,7 @@
 
         <div>
             <h2 class="font-semibold text-slate-800">
-                Credit Invoices
+                Transaction Invoices
             </h2>
 
             <p class="mt-1 text-xs text-slate-500">

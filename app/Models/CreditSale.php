@@ -20,14 +20,30 @@ class CreditSale extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function items(): HasMany
+    // public function items(): HasMany
+    // {
+    //     return $this->hasMany(CreditSaleItem::class);
+    // }
+
+    public function items()
     {
-        return $this->hasMany(CreditSaleItem::class);
+        return $this->hasMany(
+            CreditSaleItem::class,
+            'credit_sale_id'
+        );
     }
 
-    public function allocations(): HasMany
+    // public function allocations(): HasMany
+    // {
+    //     return $this->hasMany(CreditPaymentAllocation::class);
+    // }
+
+    public function allocations()
     {
-        return $this->hasMany(CreditPaymentAllocation::class);
+        return $this->hasMany(
+            CreditPaymentAllocation::class,
+            'credit_sale_id'
+        );
     }
 
     public function getPaidAmountAttribute(): float

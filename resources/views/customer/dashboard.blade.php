@@ -10,7 +10,7 @@
     </h1>
 
     <p class="mt-1 text-sm text-slate-500">
-        Here you can track your credit purchases and payments.
+        Here you can track your purchases and payments with Rabin Kirana Store. Use the filters to view specific transactions and check your payment history.
     </p>
 </div>
 
@@ -24,7 +24,7 @@
     {{-- TOTAL CREDIT --}}
     <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <p class="text-sm text-slate-500">
-            Total Credit
+            Total Transactions Amount
         </p>
 
         <h2 class="mt-2 text-2xl font-bold text-blue-700">
@@ -49,16 +49,24 @@
     <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
         <p class="text-sm text-slate-500">
-            {{ $balance < 0 ? 'Advance Balance' : 'Remaining Balance' }}
+            {{ $balance < 0 ? 'Advance Paid' : 'Remaining Due Balance' }}
         </p>
 
-        <h2 class="mt-2 text-2xl font-bold text-orange-600">
+        <h2 class="mt-2 text-2xl font-bold {{ $balance < 0 ? 'text-green-600' : 'text-red-600' }}">
             Rs. {{ number_format(abs($balance), 2) }}
         </h2>
 
         @if($balance < 0)
-            <p class="mt-1 text-xs text-slate-500">
+            <p class="mt-1 text-xs text-green-600">
                 You have paid more than your recorded credit.
+            </p>
+        @elseif($balance > 0)
+            <p class="mt-1 text-xs text-red-600">
+                You have an outstanding due balance.
+            </p>
+        @else
+            <p class="mt-1 text-xs text-green-600">
+                All payments are cleared.
             </p>
         @endif
 
@@ -154,7 +162,7 @@
 
         <div>
             <h2 class="text-lg font-bold text-slate-800">
-                My Credit Purchases
+                My Transactions
             </h2>
 
             <p class="text-sm text-slate-500">
@@ -277,6 +285,7 @@
 
 
 
+
 {{-- =========================
     PAYMENT HISTORY
 ========================= --}}
@@ -306,12 +315,15 @@
     {{-- SCROLLABLE TABLE --}}
     <div class="max-h-80 overflow-x-auto overflow-y-auto">
 
-        <table class="w-full min-w-[600px] text-left text-sm">
+        <table class="w-full min-w-[750px] text-left text-sm">
 
-            {{-- STICKY TABLE HEADER --}}
             <thead class="sticky top-0 z-10 bg-slate-50 text-slate-600 shadow-sm">
 
                 <tr>
+
+                    <th class="px-5 py-3 font-semibold">
+                        Payment ID
+                    </th>
 
                     <th class="px-5 py-3 font-semibold">
                         Date
@@ -325,19 +337,28 @@
                         Amount Paid
                     </th>
 
+                    <th class="px-5 py-3 font-semibold">
+                        Action
+                    </th>
+
                 </tr>
 
             </thead>
 
 
-            {{-- TABLE BODY --}}
             <tbody class="divide-y divide-slate-100">
 
                 @forelse($payments as $payment)
 
                     <tr class="transition hover:bg-slate-50">
 
-                        {{-- PAYMENT DATE --}}
+                        {{-- PAYMENT ID --}}
+                        <td class="px-5 py-4 font-medium text-slate-800">
+                            #{{ $payment->id }}
+                        </td>
+
+
+                        {{-- DATE --}}
                         <td class="px-5 py-4 whitespace-nowrap text-slate-600">
                             {{ \Illuminate\Support\Carbon::parse($payment->payment_date)->format('d M Y') }}
                         </td>
@@ -349,9 +370,39 @@
                         </td>
 
 
-                        {{-- PAYMENT AMOUNT --}}
+                        {{-- AMOUNT --}}
                         <td class="px-5 py-4 whitespace-nowrap font-semibold text-green-700">
                             Rs. {{ number_format($payment->amount, 2) }}
+                        </td>
+
+
+                        {{-- ACTION --}}
+                        <td class="px-5 py-4">
+
+                            <a href="{{ route('customer.payments.show', $payment->id) }}"
+                               class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-4 w-4"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor"
+                                     stroke-width="2">
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+
+                                </svg>
+
+                                View Details
+
+                            </a>
+
                         </td>
 
                     </tr>
@@ -359,11 +410,13 @@
                 @empty
 
                     <tr>
-                        <td
-                            colspan="3"
-                            class="px-5 py-10 text-center text-slate-500"
-                        >
-                            <div class="mb-2 text-3xl">💰</div>
+
+                        <td colspan="5"
+                            class="px-5 py-10 text-center text-slate-500">
+
+                            <div class="mb-2 text-3xl">
+                                💰
+                            </div>
 
                             <p class="font-medium">
                                 No payments found.
@@ -372,7 +425,9 @@
                             <p class="mt-1 text-xs">
                                 Your payment history will appear here.
                             </p>
+
                         </td>
+
                     </tr>
 
                 @endforelse
@@ -384,7 +439,7 @@
     </div>
 
 
-    {{-- PAGINATION OUTSIDE SCROLL AREA --}}
+    {{-- PAGINATION --}}
     <div class="border-t border-slate-200 px-5 py-3">
 
         {{ $payments->links() }}
@@ -392,6 +447,7 @@
     </div>
 
 </div>
+
 
 
 @endsection
