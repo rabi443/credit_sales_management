@@ -23,6 +23,20 @@ class CreditPaymentController extends Controller
     }
 
     /**
+     * Display payment details.
+     */
+    public function show($id)
+    {
+        $payment = CreditPayment::with([
+            'customer',
+            'allocations.sale.items',
+            'allocations.sale.allocations',
+        ])->findOrFail($id);
+
+        return view('credits.payments.show', compact('payment'));
+    }
+
+    /**
      * Store payment and allocate it to unpaid invoices.
      */
     public function store(Request $request)

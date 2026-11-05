@@ -49,6 +49,12 @@
                     New Sale
                 </a>
 
+                <a href="{{ route('credits.temporary-sales.index') }}"
+                class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600">
+
+                    + Temporary Bill
+                </a>
+
             </div>
 
         </div>

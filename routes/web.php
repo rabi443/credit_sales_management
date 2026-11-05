@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\CustomerAccountController;
 use App\Http\Controllers\CustomerPortalAuthController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\CustomerPasswordController;
+use App\Http\Controllers\TemporarySaleController;
 
 
 // ==============================
@@ -132,6 +133,63 @@ Route::middleware('auth')
     Route::post('/payments', [CreditPaymentController::class, 'store'])
         ->name('payments.store');
 
+    // VIEW CREDIT SALE INVOICE
+    Route::get('/sales/{sale}', [
+        CreditSaleController::class,
+        'show'
+    ])->name('sales.show');
+
+    // VIEW PAYMENT DETAILS
+    Route::get('/payments/{payment}', [
+        CreditPaymentController::class,
+        'show'
+    ])->name('payments.show');
+
+
+    // ==============================
+    // TEMPORARY SALES REGISTER
+    // ==============================
+
+    Route::get('/temporary-sales', [
+        TemporarySaleController::class,
+        'index'
+    ])->name('temporary-sales.index');
+
+    Route::get('/temporary-sales/create', [
+        TemporarySaleController::class,
+        'create'
+    ])->name('temporary-sales.create');
+
+    Route::post('/temporary-sales', [
+        TemporarySaleController::class,
+        'store'
+    ])->name('temporary-sales.store');
+
+    Route::get('/temporary-sales/{id}/edit', [
+        TemporarySaleController::class,
+        'edit'
+    ])->name('temporary-sales.edit');
+
+    Route::post('/temporary-sales/{id}/items', [
+        TemporarySaleController::class,
+        'addItem'
+    ])->name('temporary-sales.items.store');
+
+    Route::put('/temporary-sales/{id}/items/{itemId}', [
+        TemporarySaleController::class,
+        'updateItem'
+    ])->name('temporary-sales.items.update');
+
+    Route::delete('/temporary-sales/{id}/items/{itemId}', [
+        TemporarySaleController::class,
+        'deleteItem'
+    ])->name('temporary-sales.items.destroy');
+
+    Route::delete('/temporary-sales/{id}', [
+        TemporarySaleController::class,
+        'destroy'
+    ])->name('temporary-sales.destroy');
+    
 });
 
 // Customer authentication

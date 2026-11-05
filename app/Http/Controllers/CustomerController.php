@@ -52,61 +52,167 @@ class CustomerController extends Controller
     // SHOW CUSTOMER LEDGER
     // ==========================================
 
-    public function show(Request $request, Customer $customer)
+    // public function show(Request $request, Customer $customer)
+    // {
+    //     $filters = $request->validate([
+    //         'from' => ['nullable', 'date'],
+    //         'to' => ['nullable', 'date', 'after_or_equal:from'],
+    //     ]);
+
+    //     $from = $filters['from'] ?? null;
+    //     $to = $filters['to'] ?? null;
+
+
+    //     // CREDIT INVOICES
+
+    //     $salesQuery = CreditSale::where('customer_id', $customer->id)
+    //         ->with(['items', 'allocations']);
+
+    //     if ($from) {
+    //         $salesQuery->whereDate('sale_date', '>=', $from);
+    //     }
+
+    //     if ($to) {
+    //         $salesQuery->whereDate('sale_date', '<=', $to);
+    //     }
+
+    //     $sales = $salesQuery
+    //         ->orderByDesc('sale_date')
+    //         ->paginate(10, ['*'], 'sales_page')
+    //         ->withQueryString();
+
+
+    //     // PAYMENT HISTORY
+
+    //     $paymentsQuery = CreditPayment::where('customer_id', $customer->id)
+    //         ->with('allocations');
+
+    //     if ($from) {
+    //         $paymentsQuery->whereDate('payment_date', '>=', $from);
+    //     }
+
+    //     if ($to) {
+    //         $paymentsQuery->whereDate('payment_date', '<=', $to);
+    //     }
+
+    //     $payments = $paymentsQuery
+    //         ->orderByDesc('payment_date')
+    //         ->paginate(10, ['*'], 'payments_page')
+    //         ->withQueryString();
+
+
+    //     return view('credits.customers.show', compact(
+    //         'customer',
+    //         'sales',
+    //         'payments',
+    //         'from',
+    //         'to'
+    //     ));
+    // }
+
+    public function show(Request $request, $id)
     {
-        $filters = $request->validate([
+        $request->validate([
             'from' => ['nullable', 'date'],
-            'to' => ['nullable', 'date', 'after_or_equal:from'],
+            'to'   => ['nullable', 'date', 'after_or_equal:from'],
         ]);
 
-        $from = $filters['from'] ?? null;
-        $to = $filters['to'] ?? null;
+        $customer = Customer::findOrFail($id);
 
+        $from = $request->input('from');
+        $to   = $request->input('to');
 
-        // CREDIT INVOICES
+        // ==========================================
+        // SALES QUERY
+        // ==========================================
 
         $salesQuery = CreditSale::where('customer_id', $customer->id)
-            ->with(['items', 'allocations']);
+            ->when($from, function ($query) use ($from) {
+                $query->whereDate('sale_date', '>=', $from);
+            })
+            ->when($to, function ($query) use ($to) {
+                $query->whereDate('sale_date', '<=', $to);
+            });
 
-        if ($from) {
-            $salesQuery->whereDate('sale_date', '>=', $from);
-        }
+        // Get ALL filtered sales for totals (not just current page)
+        $allSales = (clone $salesQuery)
+            ->with(['items', 'allocations'])
+            ->get();
 
-        if ($to) {
-            $salesQuery->whereDate('sale_date', '<=', $to);
-        }
+        // Invoice table totals
+        $totalCredit = (float) $allSales->sum('total_amount');
 
-        $sales = $salesQuery
-            ->orderByDesc('sale_date')
+        $totalInvoicePaid = (float) $allSales->sum(function ($sale) {
+            return $sale->allocations->sum('amount');
+        });
+
+        $totalDue = max(0, $totalCredit - $totalInvoicePaid);
+
+        // Paginated sales
+        $sales = (clone $salesQuery)
+            ->with(['items', 'allocations'])
+            ->latest('sale_date')
             ->paginate(10, ['*'], 'sales_page')
             ->withQueryString();
 
 
-        // PAYMENT HISTORY
+        // ==========================================
+        // PAYMENTS QUERY
+        // ==========================================
 
         $paymentsQuery = CreditPayment::where('customer_id', $customer->id)
-            ->with('allocations');
+            ->when($from, function ($query) use ($from) {
+                $query->whereDate('payment_date', '>=', $from);
+            })
+            ->when($to, function ($query) use ($to) {
+                $query->whereDate('payment_date', '<=', $to);
+            });
 
-        if ($from) {
-            $paymentsQuery->whereDate('payment_date', '>=', $from);
-        }
+        // Get ALL filtered payments for totals
+        $allPayments = (clone $paymentsQuery)
+            ->with('allocations')
+            ->get();
 
-        if ($to) {
-            $paymentsQuery->whereDate('payment_date', '<=', $to);
-        }
+        // Payment table totals
+        $totalReceived = (float) $allPayments->sum('amount');
 
-        $payments = $paymentsQuery
-            ->orderByDesc('payment_date')
+        $totalAdvance = (float) $allPayments->sum(function ($payment) {
+            $allocated = (float) $payment->allocations->sum('amount');
+
+            return max(0, (float) $payment->amount - $allocated);
+        });
+
+        // Paginated payments
+        $payments = (clone $paymentsQuery)
+            ->with('allocations')
+            ->latest('payment_date')
             ->paginate(10, ['*'], 'payments_page')
             ->withQueryString();
 
+
+        // ==========================================
+        // DATE-FILTERED SUMMARY CARDS
+        // ==========================================
+
+        $outstanding = max(0, $totalCredit - $totalReceived);
+
+        $advance = max(0, $totalReceived - $totalCredit);
 
         return view('credits.customers.show', compact(
             'customer',
             'sales',
             'payments',
             'from',
-            'to'
+            'to',
+
+            'totalCredit',
+            'totalReceived',
+            'outstanding',
+            'advance',
+
+            'totalInvoicePaid',
+            'totalDue',
+            'totalAdvance'
         ));
     }
 
