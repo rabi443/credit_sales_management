@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Customer Login - Rabin Credit Manager</title>
+    <title>Customer Login - Rabin Kirana Store</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -15,14 +15,14 @@
     <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
 
         <div class="mb-7 text-center">
-            <div class="mb-3 text-4xl">💳</div>
+            <div class="mb-3 text-4xl">ðŸ’³</div>
 
             <h1 class="text-2xl font-bold text-slate-800">
-                Customer Portal
+                Rabin Kirana Store
             </h1>
 
             <p class="mt-2 text-sm text-slate-500">
-                Login to view your credit account.
+                Login to View Your Transaction Details.
             </p>
         </div>
 
@@ -87,12 +87,12 @@
             </p>
         </div>
 
-        <div class="mt-4 text-center">
+        {{-- <div class="mt-4 text-center">
             <a href="{{ route('login') }}"
                class="text-sm text-blue-600 hover:underline">
                 Admin Login
             </a>
-        </div>
+        </div> --}}
 
     </div>
 

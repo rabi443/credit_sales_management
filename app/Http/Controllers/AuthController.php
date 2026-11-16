@@ -10,6 +10,10 @@ class AuthController extends Controller
 {
     public function loginForm()
     {
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('credits.index');
+        }
+
         return view('auth.login');
     }
 
@@ -33,6 +37,10 @@ class AuthController extends Controller
 
     public function registerForm()
     {
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('credits.index');
+        }
+
         if (User::count() > 0) {
             return redirect('/login');
         }

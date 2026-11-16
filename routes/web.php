@@ -16,23 +16,26 @@ use App\Http\Controllers\TemporarySaleController;
 
 
 // ==============================
-// AUTHENTICATION ROUTES
+// ADMIN AUTHENTICATION
 // ==============================
 
-Route::get('/login', [AuthController::class, 'loginForm'])
-    ->name('login');
+Route::middleware(\App\Http\Middleware\AdminGuest::class)->group(function () {
 
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login.store');
+    Route::get('/login', [AuthController::class, 'loginForm'])
+        ->name('login');
 
-Route::get('/register', [AuthController::class, 'registerForm'])
-    ->name('register');
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.store');
 
-Route::post('/register', [AuthController::class, 'register'])
-    ->name('register.store');
+    Route::get('/register', [AuthController::class, 'registerForm'])
+        ->name('register');
+
+    Route::post('/register', [AuthController::class, 'register'])
+        ->name('register.store');
+});
 
 Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
+    ->middleware('auth:web')
     ->name('logout');
 
 
@@ -195,7 +198,8 @@ Route::middleware('auth')
 // Customer authentication
 Route::prefix('customer')->name('customer.')->group(function () {
 
-    Route::middleware('guest:customer')->group(function () {
+    Route::middleware(\App\Http\Middleware\CustomerGuest::class)->group(function () {
+
         Route::get('/login', [CustomerPortalAuthController::class, 'showLogin'])
             ->name('login');
 
