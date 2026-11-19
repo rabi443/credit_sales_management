@@ -48,68 +48,6 @@ class CustomerController extends Controller
     }
 
 
-    // ==========================================
-    // SHOW CUSTOMER LEDGER
-    // ==========================================
-
-    // public function show(Request $request, Customer $customer)
-    // {
-    //     $filters = $request->validate([
-    //         'from' => ['nullable', 'date'],
-    //         'to' => ['nullable', 'date', 'after_or_equal:from'],
-    //     ]);
-
-    //     $from = $filters['from'] ?? null;
-    //     $to = $filters['to'] ?? null;
-
-
-    //     // CREDIT INVOICES
-
-    //     $salesQuery = CreditSale::where('customer_id', $customer->id)
-    //         ->with(['items', 'allocations']);
-
-    //     if ($from) {
-    //         $salesQuery->whereDate('sale_date', '>=', $from);
-    //     }
-
-    //     if ($to) {
-    //         $salesQuery->whereDate('sale_date', '<=', $to);
-    //     }
-
-    //     $sales = $salesQuery
-    //         ->orderByDesc('sale_date')
-    //         ->paginate(10, ['*'], 'sales_page')
-    //         ->withQueryString();
-
-
-    //     // PAYMENT HISTORY
-
-    //     $paymentsQuery = CreditPayment::where('customer_id', $customer->id)
-    //         ->with('allocations');
-
-    //     if ($from) {
-    //         $paymentsQuery->whereDate('payment_date', '>=', $from);
-    //     }
-
-    //     if ($to) {
-    //         $paymentsQuery->whereDate('payment_date', '<=', $to);
-    //     }
-
-    //     $payments = $paymentsQuery
-    //         ->orderByDesc('payment_date')
-    //         ->paginate(10, ['*'], 'payments_page')
-    //         ->withQueryString();
-
-
-    //     return view('credits.customers.show', compact(
-    //         'customer',
-    //         'sales',
-    //         'payments',
-    //         'from',
-    //         'to'
-    //     ));
-    // }
-
     public function show(Request $request, $id)
     {
         $request->validate([
@@ -194,9 +132,23 @@ class CustomerController extends Controller
         // DATE-FILTERED SUMMARY CARDS
         // ==========================================
 
-        $outstanding = max(0, $totalCredit - $totalReceived);
+        // $outstanding = max(0, $totalCredit - $totalReceived);
 
-        $advance = max(0, $totalReceived - $totalCredit);
+        // $advance = max(0, $totalReceived - $totalCredit);
+
+        // Actual outstanding from filtered invoices
+        $outstanding = (float) $allSales->sum(function ($sale) {
+            $paid = (float) $sale->allocations->sum('amount');
+
+            return max(0, (float) $sale->total_amount - $paid);
+        });
+
+        // Actual advance from filtered payments
+        $advance = (float) $allPayments->sum(function ($payment) {
+            $allocated = (float) $payment->allocations->sum('amount');
+
+            return max(0, (float) $payment->amount - $allocated);
+        });
 
         return view('credits.customers.show', compact(
             'customer',
