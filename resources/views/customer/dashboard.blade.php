@@ -1,4 +1,3 @@
-
 @extends('layouts.customer')
 
 @section('title', 'My Credit Dashboard')
@@ -101,18 +100,18 @@
         </div>
 
 
-        {{-- PERIOD NET BALANCE --}}
+        {{-- ACTUAL ACCOUNT BALANCE --}}
 
         <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
             <div class="flex items-center justify-between">
 
                 <p class="text-sm font-medium text-slate-500">
-                    {{ $balance < 0 ? 'Net Advance' : 'Net Due' }}
+                    {{ ($advance ?? 0) > 0 ? 'Net Advance' : 'Net Due' }}
                 </p>
 
                 <span class="rounded-lg p-2
-                    {{ $balance > 0
+                    {{ ($due ?? 0) > 0
                         ? 'bg-red-50 text-red-600'
                         : 'bg-green-50 text-green-600' }}">
 
@@ -132,14 +131,14 @@
             </div>
 
             <h2 class="mt-3 text-2xl font-bold
-                {{ $balance > 0 ? 'text-red-600' : 'text-green-600' }}">
+                {{ ($due ?? 0) > 0 ? 'text-red-600' : 'text-green-600' }}">
 
-                Rs. {{ number_format(abs($balance), 2) }}
+                Rs. {{ number_format(($advance ?? 0) > 0 ? $advance : ($due ?? 0), 2) }}
 
             </h2>
 
             <p class="mt-1 text-xs text-slate-400">
-                Net difference in selected period
+                Based on outstanding invoices and unallocated payments
             </p>
 
         </div>
@@ -258,8 +257,9 @@
             @endif
 
             <p class="mt-1">
-                Outstanding invoices are filtered by invoice date,
-                but their remaining balances include all allocated payments.
+                Outstanding invoices are filtered by invoice date.
+                Paid amounts include all payments allocated to those invoices,
+                matching the customer account calculation.
             </p>
 
         </div>
@@ -669,16 +669,10 @@
 
                     @forelse($outstandingSales as $sale)
 
+                        {{-- Values are calculated in CustomerPortalController --}}
                         @php
-
-                            $paidAmount = (float) $sale->allocations
-                                ->sum('amount');
-
-                            $dueAmount = max(
-                                0,
-                                (float) $sale->total_amount - $paidAmount
-                            );
-
+                            $paidAmount = (float) ($sale->paid_amount_as_of ?? 0);
+                            $dueAmount = (float) ($sale->remaining_due_as_of ?? 0);
                         @endphp
 
                         <tr class="transition hover:bg-red-50/40">
@@ -852,13 +846,13 @@
                 <div class="flex justify-between gap-3">
 
                     <span class="font-bold text-slate-800">
-                        {{ $balance < 0 ? 'Net Advance' : 'Net Due' }}
+                        {{ ($advance ?? 0) > 0 ? 'Net Advance' : 'Net Due' }}
                     </span>
 
                     <span class="text-lg font-bold
-                        {{ $balance > 0 ? 'text-red-600' : 'text-green-600' }}">
+                        {{ ($due ?? 0) > 0 ? 'text-red-600' : 'text-green-600' }}">
 
-                        Rs. {{ number_format(abs($balance), 2) }}
+                        Rs. {{ number_format(($advance ?? 0) > 0 ? $advance : ($due ?? 0), 2) }}
 
                     </span>
 
