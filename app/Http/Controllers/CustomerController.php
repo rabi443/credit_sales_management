@@ -132,10 +132,6 @@ class CustomerController extends Controller
         // DATE-FILTERED SUMMARY CARDS
         // ==========================================
 
-        // $outstanding = max(0, $totalCredit - $totalReceived);
-
-        // $advance = max(0, $totalReceived - $totalCredit);
-
         // Actual outstanding from filtered invoices
         $outstanding = (float) $allSales->sum(function ($sale) {
             $paid = (float) $sale->allocations->sum('amount');
@@ -189,7 +185,7 @@ class CustomerController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:2000'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         // Upload new photo
