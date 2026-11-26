@@ -43,6 +43,11 @@
                     Add Customer
                 </a>
 
+                <a href="{{ route('credits.products.index') }}"
+                class="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-purple-700">
+                    Products
+                </a>
+
                 <a href="{{ route('credits.sales.create') }}"
                    class="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-700">
                     <span>＋</span>
@@ -53,6 +58,11 @@
                 class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600">
 
                     + Temporary Bill
+                </a>
+
+                <a href="{{ route('credits.purchases.index') }}"
+                class="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-purple-700">
+                    🛒 Purchase
                 </a>
 
             </div>
