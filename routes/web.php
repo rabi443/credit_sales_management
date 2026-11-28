@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CustomerAccountController;
 use App\Http\Controllers\CustomerPortalAuthController;
 use App\Http\Controllers\CustomerPortalController;
 use App\Http\Controllers\CustomerPasswordController;
+use App\Http\Controllers\CustomerProductController;
 
 use App\Http\Controllers\TemporarySaleController;
 use App\Http\Controllers\PurchaseController;
@@ -352,6 +353,26 @@ Route::prefix('customer')
 
                 Route::post('/logout', [CustomerPortalAuthController::class, 'logout'])
                     ->name('logout');
+
+                // CUSTOMER SHOPPING
+                Route::controller(CustomerProductController::class)->group(function () {
+
+                    Route::get('/products', 'index')->name('products.index');
+
+                    Route::get('/products/{product}', 'show')->name('products.show');
+
+                    Route::post('/products/{product}/cart', 'addToCart')
+                        ->name('cart.add');
+
+                    Route::get('/cart', 'cart')->name('cart.index');
+
+                    Route::put('/cart/{product}', 'updateCart')
+                        ->name('cart.update');
+
+                    Route::delete('/cart/{product}', 'removeFromCart')
+                        ->name('cart.remove');
+
+                });
 
             });
 

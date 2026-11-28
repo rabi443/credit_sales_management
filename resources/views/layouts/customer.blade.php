@@ -12,89 +12,103 @@
 
 <body class="flex min-h-screen flex-col bg-slate-100 text-slate-800">
 
-    {{-- =========================
-        HEADER
-    ========================= --}}
+    {{-- HEADER --}}
     <header class="bg-slate-900 text-white shadow">
 
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4">
 
-            {{-- LOGO / TITLE --}}
+            {{-- LOGO --}}
             <a href="{{ route('customer.dashboard') }}"
                class="text-lg font-bold">
                 💳 Rabin Kirana Store
             </a>
 
 
-            {{-- CUSTOMER PROFILE + LOGOUT --}}
-            <div class="flex items-center gap-3 text-sm">
+            {{-- CUSTOMER ACTIONS --}}
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-sm">
 
                 @php
                     $loggedCustomer = auth('customer')->user();
 
-                    $profilePhoto = $loggedCustomer->photo
+                    $profilePhoto = $loggedCustomer && $loggedCustomer->photo
                         ? \Illuminate\Support\Facades\Storage::url($loggedCustomer->photo)
                         : null;
 
-                    $profileInitial = strtoupper(
-                        substr($loggedCustomer->name, 0, 1)
-                    );
+                    $profileInitial = $loggedCustomer
+                        ? strtoupper(substr($loggedCustomer->name, 0, 1))
+                        : 'C';
                 @endphp
 
 
-                {{-- CLICKABLE PROFILE PHOTO --}}
+                {{-- PRODUCTS BUTTON --}}
+                <a href="{{ route('customer.products.index') }}"
+                   class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 font-semibold text-white transition hover:bg-indigo-700">
+
+                    🛍️ <span>Products</span>
+
+                </a>
+
+
+                {{-- SHOPPING CART BUTTON --}}
+                <a href="{{ route('customer.cart.index') }}"
+                   class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 font-semibold text-white transition hover:bg-emerald-700">
+
+                    🛒 <span>Cart</span>
+
+                    <span class="rounded-full bg-white px-2 py-0.5 text-xs text-emerald-700">
+                        {{ collect(session('customer_cart', []))->sum('quantity') }}
+                    </span>
+
+                </a>
+
+
+                {{-- PROFILE PHOTO --}}
                 @if($profilePhoto)
 
-                    <a
-                        href="{{ $profilePhoto }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="View full profile photo"
-                        class="shrink-0"
-                    >
-                        <img
-                            src="{{ $profilePhoto }}"
-                            alt="{{ $loggedCustomer->name }}"
-                            class="h-10 w-10 cursor-pointer rounded-full border-2 border-white object-cover transition hover:scale-110 hover:ring-2 hover:ring-blue-400"
-                        >
+                    <a href="{{ $profilePhoto }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       title="View full profile photo"
+                       class="shrink-0">
+
+                        <img src="{{ $profilePhoto }}"
+                             alt="{{ $loggedCustomer->name }}"
+                             class="h-10 w-10 cursor-pointer rounded-full border-2 border-white object-cover transition hover:scale-110 hover:ring-2 hover:ring-blue-400">
+
                     </a>
 
                 @else
 
-                    {{-- DEFAULT PROFILE INITIAL --}}
-                    <div
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-lg font-bold text-white"
-                        title="{{ $loggedCustomer->name }}"
-                    >
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-lg font-bold text-white">
                         {{ $profileInitial }}
                     </div>
 
                 @endif
 
 
-                {{-- CUSTOMER NAME --}}
-                {{-- <span class="hidden font-semibold sm:inline">
-                    {{ $loggedCustomer->name }}
-                </span> --}}
+                {{-- CUSTOMER PROFILE --}}
+                @if($loggedCustomer)
 
-                <a
-                    href="{{ route('customer.profile') }}"
-                    class="font-semibold text-white transition hover:text-blue-300"
-                    title="View My Profile"
-                >
-                    {{ $loggedCustomer->name }}
-                </a>
+                    <a href="{{ route('customer.profile') }}"
+                       class="font-semibold text-white transition hover:text-blue-300"
+                       title="View My Profile">
+
+                        {{ $loggedCustomer->name }}
+
+                    </a>
+
+                @endif
 
 
                 {{-- LOGOUT --}}
                 <form method="POST" action="{{ route('customer.logout') }}">
                     @csrf
 
-                    <button
-                        type="submit"
-                        class="rounded-lg border border-slate-600 px-3 py-2 transition hover:bg-slate-800"
-                    >
+                    <button type="submit"
+                            class="rounded-lg border border-slate-600 px-3 py-2 transition hover:bg-slate-800">
+
                         Logout
+
                     </button>
                 </form>
 
@@ -105,9 +119,7 @@
     </header>
 
 
-    {{-- =========================
-        MAIN CONTENT
-    ========================= --}}
+    {{-- MAIN CONTENT --}}
     <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
 
         @if(session('success'))
@@ -127,13 +139,10 @@
     </main>
 
 
-    {{-- =========================
-        FOOTER
-    ========================= --}}
+    {{-- FOOTER --}}
     <footer class="mt-10 bg-slate-900 text-slate-300">
 
         <div class="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 sm:grid-cols-2 lg:grid-cols-4">
-
 
             {{-- SHOP INFORMATION --}}
             <div>
@@ -143,7 +152,7 @@
                 </h2>
 
                 <p class="text-sm leading-6 text-slate-400">
-                    Welcome to your customer credit account.
+                    Welcome to our Rabin Kirana Store.
                     View your purchases, payment history and
                     outstanding balance anytime.
                 </p>
@@ -151,6 +160,13 @@
                 <p class="mt-4 text-sm text-slate-400">
                     Thank you for being our valued customer.
                 </p>
+
+                <a href="{{ route('customer.products.index') }}"
+                   class="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
+
+                    🛍️ Explore Products
+
+                </a>
 
             </div>
 
@@ -164,7 +180,6 @@
 
                 <div class="space-y-3 text-sm">
 
-                    {{-- PHONE --}}
                     <p>
                         <span class="mr-2">📞</span>
 
@@ -174,8 +189,6 @@
                         </a>
                     </p>
 
-
-                    {{-- WHATSAPP --}}
                     <p>
                         <span class="mr-2">💬</span>
 
@@ -187,8 +200,6 @@
                         </a>
                     </p>
 
-
-                    {{-- EMAIL --}}
                     <p>
                         <span class="mr-2">✉️</span>
 
